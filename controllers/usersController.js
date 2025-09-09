@@ -93,12 +93,185 @@ async function handleLogout(req, res) {
     });
 }
 
+// Show dashboard
+async function showDashboard(req, res) {
+    try {
+        // Check if user is authenticated
+        if (!req.session || !req.session.user) {
+            return res.redirect('/login');
+        }
+
+        // Get user data from database for fresh information
+        const user = await usersModel.findUserById(req.session.userId);
+        if (!user) {
+            req.session.destroy(() => {
+                return res.redirect('/login');
+            });
+            return;
+        }
+
+        // TODO: Get user's recent orders, cart items, etc.
+        // For now, we'll just show basic user info
+        
+        res.render('pages/dashboard', {
+            title: 'Dashboard',
+            isAuthenticated: true,
+            user: req.session.user,
+            userData: user,
+            // These would come from your order/cart models
+            recentOrders: [],
+            cartItems: 0,
+            totalSpent: 0
+        });
+    } catch (error) {
+        console.error('Dashboard error:', error);
+        res.status(500).render('pages/error', {
+            message: 'Error loading dashboard',
+            error: error
+        });
+    }
+}
+
+// Show profile page
+async function showProfile(req, res) {
+    try {
+        // Check if user is authenticated
+        if (!req.session || !req.session.user) {
+            return res.redirect('/login');
+        }
+
+        // Get fresh user data from database
+        const user = await usersModel.findUserById(req.session.userId);
+        if (!user) {
+            req.session.destroy(() => {
+                return res.redirect('/login');
+            });
+            return;
+        }
+
+        res.render('pages/profile', {
+            title: 'Profile',
+            isAuthenticated: true,
+            user: req.session.user,
+            userData: user,
+            error: null,
+            success: null
+        });
+    } catch (error) {
+        console.error('Profile error:', error);
+        res.status(500).render('pages/error', {
+            message: 'Error loading profile',
+            error: error
+        });
+    }
+}
+
+// Update profile
+async function updateProfile(req, res) {
+    try {
+        // Check if user is authenticated
+        if (!req.session || !req.session.user) {
+            return res.redirect('/login');
+        }
+
+        const { first_name, last_name, email, current_password, new_password } = req.body;
+        const userId = req.session.userId;
+
+        // Get current user data
+        const currentUser = await usersModel.findUserById(userId);
+        if (!currentUser) {
+            return res.redirect('/login');
+        }
+
+        // Validate current password if trying to change password
+        if (new_password && new_password.trim() !== '') {
+            if (!current_password) {
+                return res.render('pages/profile', {
+                    title: 'Profile',
+                    isAuthenticated: true,
+                    user: req.session.user,
+                    userData: currentUser,
+                    error: 'Current password is required to change password.',
+                    success: null
+                });
+            }
+
+            const isValidPassword = await bcrypt.compare(current_password, currentUser.password);
+            if (!isValidPassword) {
+                return res.render('pages/profile', {
+                    title: 'Profile',
+                    isAuthenticated: true,
+                    user: req.session.user,
+                    userData: currentUser,
+                    error: 'Current password is incorrect.',
+                    success: null
+                });
+            }
+        }
+
+        // Check if email is being changed and if it's already taken
+        if (email && email !== currentUser.email) {
+            const existingUser = await usersModel.findUserByEmail(email);
+            if (existingUser) {
+                return res.render('pages/profile', {
+                    title: 'Profile',
+                    isAuthenticated: true,
+                    user: req.session.user,
+                    userData: currentUser,
+                    error: 'Email is already taken by another user.',
+                    success: null
+                });
+            }
+        }
+
+        // Prepare update data
+        const updateData = {};
+        if (first_name) updateData.first_name = first_name;
+        if (last_name) updateData.last_name = last_name;
+        if (email) updateData.email = email;
+        if (new_password && new_password.trim() !== '') {
+            updateData.password = await bcrypt.hash(new_password, 10);
+        }
+
+        // Update user
+        const updatedUser = await usersModel.updateUser(userId, updateData);
+        
+        // Update session with new data
+        req.session.user = {
+            _id: String(updatedUser._id),
+            email: updatedUser.email,
+            first_name: updatedUser.first_name,
+            last_name: updatedUser.last_name,
+            role: updatedUser.role
+        };
+
+        res.render('pages/profile', {
+            title: 'Profile',
+            isAuthenticated: true,
+            user: req.session.user,
+            userData: updatedUser,
+            error: null,
+            success: 'Profile updated successfully!'
+        });
+
+    } catch (error) {
+        console.error('Update profile error:', error);
+        res.status(500).render('pages/error', {
+            message: 'Error updating profile',
+            error: error
+        });
+    }
+}
+
 module.exports = {
     showRegister,
     handleRegister,
     showLogin,
     handleLogin,
-    handleLogout
+    handleLogout,
+    showDashboard,
+    showProfile,
+    updateProfile
 };
 
 

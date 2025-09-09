@@ -11,6 +11,13 @@ router.post('/login', usersController.handleLogin);
 router.get('/logout', usersController.handleLogout);
 router.post('/logout', usersController.handleLogout);
 
+// Dashboard route
+router.get('/dashboard', usersController.showDashboard);
+
+// Profile routes
+router.get('/profile', usersController.showProfile);
+router.post('/profile', usersController.updateProfile);
+
 module.exports = router;
 
 
