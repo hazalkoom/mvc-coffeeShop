@@ -34,7 +34,19 @@ async function updateUser(id, updates) {
 		{ $set: updates },
 		{ returnDocument: 'after' }
 	);
-	return result.value;
+	
+	// Check if the update was successful and return the updated user
+	if (result && result.value) {
+		return result.value;
+	} else {
+		// If findOneAndUpdate didn't work, try a different approach
+		await col.updateOne(
+			{ _id: new ObjectId(id) },
+			{ $set: updates }
+		);
+		// Return the updated user by fetching it
+		return await col.findOne({ _id: new ObjectId(id) });
+	}
 }
 
 async function deleteUser(id) {

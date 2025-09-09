@@ -236,6 +236,18 @@ async function updateProfile(req, res) {
         // Update user
         const updatedUser = await usersModel.updateUser(userId, updateData);
         
+        // Check if update was successful
+        if (!updatedUser) {
+            return res.render('pages/profile', {
+                title: 'Profile',
+                isAuthenticated: true,
+                user: req.session.user,
+                userData: currentUser,
+                error: 'Failed to update profile. Please try again.',
+                success: null
+            });
+        }
+        
         // Update session with new data
         req.session.user = {
             _id: String(updatedUser._id),
