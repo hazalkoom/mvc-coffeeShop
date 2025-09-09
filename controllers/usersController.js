@@ -110,17 +110,17 @@ async function showDashboard(req, res) {
             return;
         }
 
-        // TODO: Get user's recent orders, cart items, etc.
-        // For now, we'll just show basic user info
+        // Get user's cart items count
+        const cart = await usersModel.getCart(req.session.userId);
+        const cartItems = cart.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
         
         res.render('pages/dashboard', {
             title: 'Dashboard',
             isAuthenticated: true,
             user: req.session.user,
             userData: user,
-            // These would come from your order/cart models
             recentOrders: [],
-            cartItems: 0,
+            cartItems: cartItems,
             totalSpent: 0
         });
     } catch (error) {

@@ -82,7 +82,7 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/cart" id="navCartLink">
                                 <i class="fas fa-shopping-cart" id="navCartIcon"></i>
-                                Cart <span class="badge" id="cartCount">0</span>
+                                Cart <span class="badge" id="cartCount"><%= typeof cartCount !== 'undefined' ? cartCount : 0 %></span>
                             </a>
                         </li>
                         <li class="nav-item dropdown">
@@ -122,3 +122,19 @@
 
     <!-- Main Content Wrapper -->
     <main class="main-content">
+
+<script>
+// Function to update cart count in header
+function updateCartCount(newCount) {
+    const cartCountEl = document.getElementById('cartCount');
+    if (cartCountEl) {
+        cartCountEl.textContent = newCount;
+    }
+}
+
+// Function to get current cart count
+function getCurrentCartCount() {
+    const cartCountEl = document.getElementById('cartCount');
+    return cartCountEl ? parseInt(cartCountEl.textContent) || 0 : 0;
+}
+</script>

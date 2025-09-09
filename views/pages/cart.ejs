@@ -121,8 +121,12 @@ async function updateCartQuantity(productId, quantity, rowElement) {
 
         if (data.ok) {
             // Update the main cart counter in the navigation bar
-            const cartCountEl = document.getElementById('cartCount');
-            if(cartCountEl) cartCountEl.textContent = data.cartCount;
+            if (typeof updateCartCount === 'function') {
+                updateCartCount(data.cartCount);
+            } else {
+                const cartCountEl = document.getElementById('cartCount');
+                if(cartCountEl) cartCountEl.textContent = data.cartCount;
+            }
 
             // If the item's quantity is now 0, remove it from the view
             if (data.removed || quantity === 0) {

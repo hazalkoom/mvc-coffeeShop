@@ -25,7 +25,7 @@ app.use(session({
 }));
 
 // auth locals for all views
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
     res.locals.isAuthenticated = !!(req.session && req.session.user);
     res.locals.user = (req.session && req.session.user) || null;
     
@@ -36,6 +36,20 @@ app.use((req, res, next) => {
     // Clear flash messages after they're used
     delete req.session.error;
     delete req.session.success;
+    
+    // Calculate cart count for authenticated users
+    if (req.session && req.session.userId) {
+        try {
+            const usersModel = require('./models/usersModel');
+            const cart = await usersModel.getCart(req.session.userId);
+            res.locals.cartCount = cart.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+        } catch (error) {
+            console.error('Error getting cart count:', error);
+            res.locals.cartCount = 0;
+        }
+    } else {
+        res.locals.cartCount = 0;
+    }
     
     next();
 });
