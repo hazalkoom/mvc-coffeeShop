@@ -1,0 +1,289 @@
+<!-- views/partials/footer.ejs -->
+    </main>
+    <!-- End Main Content -->
+
+    <!-- Footer -->
+    <footer class="footer mt-5">
+        <div class="footer-top">
+            <div class="container">
+                <div class="row g-4">
+                    <!-- About Section -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="footer-widget">
+                            <h5 class="footer-title">
+                                <i class="fas fa-coffee me-2"></i>CoffeeShop
+                            </h5>
+                            <p class="footer-text">
+                                Your premium destination for the finest coffee, tea, and pastries from around the world. 
+                                Experience the perfect blend of quality and taste in every sip.
+                            </p>
+                            <div class="social-links">
+                                <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                                <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                                <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div class="col-lg-2 col-md-6">
+                        <div class="footer-widget">
+                            <h6 class="footer-title">Quick Links</h6>
+                            <ul class="footer-links">
+                                <li><a href="/"><i class="fas fa-chevron-right me-2"></i>Home</a></li>
+                                <li><a href="/products"><i class="fas fa-chevron-right me-2"></i>Products</a></li>
+                                <li><a href="/about"><i class="fas fa-chevron-right me-2"></i>About Us</a></li>
+                                <li><a href="/contact"><i class="fas fa-chevron-right me-2"></i>Contact</a></li>
+                                <li><a href="/blog"><i class="fas fa-chevron-right me-2"></i>Blog</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Categories -->
+                    <div class="col-lg-2 col-md-6">
+                        <div class="footer-widget">
+                            <h6 class="footer-title">Categories</h6>
+                            <ul class="footer-links">
+                                <li><a href="/products?category=coffee"><i class="fas fa-coffee me-2"></i>Coffee</a></li>
+                                <li><a href="/products?category=tea"><i class="fas fa-leaf me-2"></i>Tea</a></li>
+                                <li><a href="/products?category=pastry"><i class="fas fa-cookie-bite me-2"></i>Pastries</a></li>
+                                <li><a href="/products?category=smoothie"><i class="fas fa-blender me-2"></i>Smoothies</a></li>
+                                <li><a href="/products?category=juice"><i class="fas fa-glass-whiskey me-2"></i>Juices</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Contact Info -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="footer-widget">
+                            <h6 class="footer-title">Contact Info</h6>
+                            <div class="contact-info">
+                                <div class="contact-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <div>
+                                        <strong>Address:</strong><br>
+                                        123 Coffee Street, Bean City<br>
+                                        New York, NY 10001
+                                    </div>
+                                </div>
+                                <div class="contact-item">
+                                    <i class="fas fa-phone"></i>
+                                    <div>
+                                        <strong>Phone:</strong><br>
+                                        <a href="tel:+1234567890">+1 (234) 567-8900</a>
+                                    </div>
+                                </div>
+                                <div class="contact-item">
+                                    <i class="fas fa-envelope"></i>
+                                    <div>
+                                        <strong>Email:</strong><br>
+                                        <a href="mailto:info@coffeeshop.com">info@coffeeshop.com</a>
+                                    </div>
+                                </div>
+                                <div class="contact-item">
+                                    <i class="fas fa-clock"></i>
+                                    <div>
+                                        <strong>Hours:</strong><br>
+                                        Mon-Fri: 6:00 AM - 10:00 PM<br>
+                                        Sat-Sun: 7:00 AM - 11:00 PM
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Bottom -->
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <p class="copyright-text">
+                            &copy; <%= new Date().getFullYear() %> CoffeeShop. All rights reserved.
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="footer-menu">
+                            <a href="/privacy-policy">Privacy Policy</a>
+                            <a href="/terms-of-service">Terms of Service</a>
+                            <a href="/cookie-policy">Cookie Policy</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <!-- Custom Footer Styles -->
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- jQuery (Optional, if you prefer it over vanilla JS) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Back to top button functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const backToTopBtn = document.getElementById('backToTop');
+            
+            // Show/hide back to top button
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            // Smooth scroll to top
+            backToTopBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            
+            // Search form submission (AJAX when grid exists)
+            const searchForm = document.querySelector('.search-form');
+            if (searchForm) {
+                searchForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const searchTerm = this.querySelector('input[name="search"]').value;
+                    const url = searchTerm.trim() ? `/products?search=${encodeURIComponent(searchTerm)}` : '/products';
+                    if (typeof fetchAndRender === 'function') {
+                        fetchAndRender(url);
+                    } else {
+                        window.location.href = url;
+                    }
+                });
+            }
+            
+            // Add active class to current page nav link
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+            
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Intercept clicks on links that filter products and update grid via AJAX
+            const productsGrid = document.getElementById('products-grid');
+            const featuredSection = document.getElementById('featured-products');
+            const cartCountEl = document.getElementById('cartCount');
+            const navCartIcon = document.getElementById('navCartIcon');
+            const paginationContainer = document.getElementById('products-pagination');
+
+            function fetchAndRender(url) {
+                if (!productsGrid) { window.location.href = url; return; }
+                fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data && data.html !== undefined) {
+                            productsGrid.innerHTML = data.html;
+                            if (paginationContainer && data.pagination !== undefined) {
+                                paginationContainer.innerHTML = data.pagination;
+                            }
+                            if (featuredSection) {
+                                featuredSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }
+                        } else {
+                            window.location.href = url;
+                        }
+                    })
+                    .catch(() => {
+                        window.location.href = url;
+                    });
+            }
+
+            // Category links in header/footer and index categories + pagination links
+            document.body.addEventListener('click', function(e) {
+                const link = e.target.closest('a[href^="/products"]');
+                if (!link) return;
+                const href = link.getAttribute('href');
+                const isFilter = href.includes('/products?') || (/^\/products$/).test(href);
+                if (!isFilter) return;
+                e.preventDefault();
+                fetchAndRender(href);
+            });
+
+            // Handle Add to Cart forms via AJAX with fly-to-cart animation
+            document.body.addEventListener('submit', async function(e) {
+                const form = e.target.closest('form[action="/cart/add"]');
+                if (!form) return;
+                e.preventDefault();
+
+                // --- MODIFICATION START ---
+                // Manually get values and create URLSearchParams body
+                const productId = form.querySelector('input[name="productId"]').value;
+                const quantity = form.querySelector('input[name="quantity"]').value || '1';
+                const body = new URLSearchParams();
+                body.append('productId', productId);
+                body.append('quantity', quantity);
+                // --- MODIFICATION END ---
+
+                try {
+                    const res = await fetch('/cart/add', {
+                        method: 'POST',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                        credentials: 'include', // Keep this from the previous fix
+                        body: body // Use the new URLSearchParams object
+                    });
+                    if (res.redirected) { window.location.href = res.url; return; }
+                    const data = await res.json();
+                    if (data && data.ok) {
+                        if (cartCountEl) cartCountEl.textContent = String(data.count);
+                        // simple fly animation
+                        const btn = form.querySelector('button');
+                        const img = form.closest('.product-card')?.querySelector('img') || document.querySelector('.product-image img');
+                        if (btn && img && navCartIcon) {
+                            const imgRect = img.getBoundingClientRect();
+                            const cartRect = navCartIcon.getBoundingClientRect();
+                            const clone = img.cloneNode();
+                            clone.style.position = 'fixed';
+                            clone.style.left = imgRect.left + 'px';
+                            clone.style.top = imgRect.top + 'px';
+                            clone.style.width = '60px';
+                            clone.style.height = '60px';
+                            clone.style.borderRadius = '50%';
+                            clone.style.transition = 'all 0.7s ease';
+                            clone.style.zIndex = 2000;
+                            document.body.appendChild(clone);
+                            requestAnimationFrame(() => {
+                                clone.style.left = cartRect.left + 'px';
+                                clone.style.top = cartRect.top + 'px';
+                                clone.style.opacity = '0.2';
+                                clone.style.transform = 'scale(0.3)';
+                            });
+                            setTimeout(() => { clone.remove(); }, 800);
+                        }
+                    }
+                } catch (err) {
+                    window.location.href = '/login';
+                }
+            });
+        });
+        
+        // Toast notification function (for later use)
+        function showToast(message, type = 'success') {
+            // This will be useful when you add notifications
+            console.log(`${type.toUpperCase()}: ${message}`);
+        }
+    </script>
+    
+</body>
+</html>

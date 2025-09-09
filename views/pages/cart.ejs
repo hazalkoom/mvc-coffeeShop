@@ -1,0 +1,154 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <h2 class="section-title mb-4">Your Cart</h2>
+        <% if (items && items.length > 0) { %>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th class="text-end">Price</th>
+                            <th class="text-center">Qty</th>
+                            <th class="text-end">Subtotal</th>
+                            <th class="text-end"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% items.forEach(it => { %>
+                            <tr class="cart-item-row" data-product-id="<%= it.productId %>">
+                                <td class="d-flex align-items-center gap-3">
+                                    <img src="<%= (it.product && it.product.image_url) || '/img/default-product.jpg' %>" alt="" style="width:60px;height:60px;object-fit:cover;border-radius:8px;">
+                                    <div>
+                                        <% if (it.product) { %>
+                                            <a href="/products/<%= it.product.product_id %>" class="fw-bold"><%= it.product.product_name %></a>
+                                        <% } else { %>
+                                            <em>Product not found</em>
+                                        <% } %>
+                                    </div>
+                                </td>
+                                <td class="text-end">$<%= it.product ? Number(it.product.price).toFixed(2) : '0.00' %></td>
+                                <td>
+                                    <div class="quantity-controls d-flex justify-content-center align-items-center">
+                                        <button class="btn btn-sm btn-outline-secondary btn-decrease">-</button>
+                                        <input type="text" class="form-control text-center mx-2 quantity-input" value="<%= it.quantity %>" readonly style="width: 60px;">
+                                        <button class="btn btn-sm btn-outline-secondary btn-increase">+</button>
+                                    </div>
+                                </td>
+                                <td class="text-end item-subtotal">
+                                    $<%= it.product ? (Number(it.product.price) * it.quantity).toFixed(2) : '0.00' %>
+                                </td>
+                                <td class="text-end">
+                                    <form action="/cart/remove" method="post">
+                                        <input type="hidden" name="productId" value="<%= it.productId %>">
+                                        <button class="btn btn-sm btn-outline-danger" title="Remove item">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <form action="/cart/clear" method="post">
+                    <button class="btn btn-outline-danger">
+                        <i class="fas fa-times-circle me-2"></i>Clear Cart
+                    </button>
+                </form>
+                <div class="text-end">
+                    <h4 class="fw-bold">Total: <span id="cart-total">$<%= total.toFixed(2) %></span></h4>
+                    <button class="btn btn-primary btn-lg mt-2">
+                        <i class="fas fa-credit-card me-2"></i>Proceed to Checkout
+                    </button>
+                </div>
+            </div>
+        <% } else { %>
+            <div class="text-center py-5">
+                <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">Your cart is empty.</h4>
+                <a href="/products" class="btn btn-primary mt-3">
+                    <i class="fas fa-store me-2"></i>Continue Shopping
+                </a>
+            </div>
+        <% } %>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.cart-item-row').forEach(row => {
+        row.addEventListener('click', e => {
+            const increaseBtn = e.target.closest('.btn-increase');
+            const decreaseBtn = e.target.closest('.btn-decrease');
+
+            if (!increaseBtn && !decreaseBtn) return;
+
+            const productId = row.dataset.productId;
+            const quantityInput = row.querySelector('.quantity-input');
+            const currentQuantity = parseInt(quantityInput.value, 10);
+            
+            // Determine the new quantity based on which button was clicked
+            const newQuantity = increaseBtn ? currentQuantity + 1 : currentQuantity - 1;
+            
+            // Prevent quantity from going below zero (the backend handles removal at 0)
+            if (newQuantity < 0) return;
+
+            updateCartQuantity(productId, newQuantity, row);
+        });
+    });
+});
+
+async function updateCartQuantity(productId, quantity, rowElement) {
+    try {
+        const response = await fetch('/cart/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ productId, quantity })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Server responded with status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+
+        if (data.ok) {
+            // Update the main cart counter in the navigation bar
+            const cartCountEl = document.getElementById('cartCount');
+            if(cartCountEl) cartCountEl.textContent = data.cartCount;
+
+            // If the item's quantity is now 0, remove it from the view
+            if (data.removed || quantity === 0) {
+                rowElement.remove();
+                 // Check if the cart is now empty
+                 if (document.querySelectorAll('.cart-item-row').length === 0) {
+                    window.location.reload(); // Reload to show the "empty cart" message
+                }
+            } else {
+                // Update the quantity input field and the subtotal for this specific item
+                rowElement.querySelector('.quantity-input').value = quantity;
+                rowElement.querySelector('.item-subtotal').textContent = '$' + data.itemTotal.toFixed(2);
+            }
+
+            // Update the total cart price
+            const cartTotalEl = document.getElementById('cart-total');
+            if (cartTotalEl) {
+                cartTotalEl.textContent = '$' + data.cartTotal.toFixed(2);
+            }
+        }
+    } catch (error) {
+        console.error('Failed to update cart:', error);
+        // Optionally, reload the page as a fallback to ensure data consistency
+        window.location.reload();
+    }
+}
+</script>
+
+<%- include('../partials/footer') %>

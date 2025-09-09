@@ -1,0 +1,35 @@
+<% if (totalPages && totalPages > 1) { %>
+    <nav aria-label="Product pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <% const paramsBase = new URLSearchParams(); %>
+            <% if (category) paramsBase.set('category', category); %>
+            <% if (search) paramsBase.set('search', search); %>
+
+            <% const makeHref = (p) => {
+                const ps = new URLSearchParams(paramsBase.toString());
+                ps.set('page', p);
+                return `/products?${ps.toString()}`;
+            } %>
+
+            <li class="page-item <%= page <= 1 ? 'disabled' : '' %>">
+                <a class="page-link" href="<%= makeHref(page - 1) %>" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            <% for (let p = 1; p <= totalPages; p++) { %>
+                <li class="page-item <%= p === page ? 'active' : '' %>">
+                    <a class="page-link" href="<%= makeHref(p) %>"><%= p %></a>
+                </li>
+            <% } %>
+
+            <li class="page-item <%= page >= totalPages ? 'disabled' : '' %>">
+                <a class="page-link" href="<%= makeHref(page + 1) %>" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+<% } %>
+
+

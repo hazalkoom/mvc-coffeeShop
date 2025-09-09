@@ -1,0 +1,151 @@
+<!-- views/pages/index.ejs -->
+<%- include('../partials/header') %>
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center min-vh-75">
+            <div class="col-lg-6">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        Welcome to <span class="text-accent">CoffeeShop</span>
+                        <i class="fas fa-coffee coffee-bounce"></i>
+                    </h1>
+                    <p class="hero-subtitle">
+                        Discover the world's finest coffee, premium teas, and delicious pastries. 
+                        From bean to cup, we bring you exceptional quality and unforgettable flavors.
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="/products" class="btn btn-primary btn-lg me-3">
+                            <i class="fas fa-coffee me-2"></i>Shop Now
+                        </a>
+                        <a href="/about" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-info-circle me-2"></i>Learn More
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-image">
+                    <div class="coffee-cup-animation">
+                        <i class="fas fa-coffee"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="categories-section py-5">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="section-title">Our Categories</h2>
+            <p class="section-subtitle">Explore our wide range of premium beverages and treats</p>
+        </div>
+        
+        <div class="row g-4">
+            <% if (categories && categories.length > 0) { %>
+                <% categories.slice(0, 6).forEach(category => { %>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="category-card">
+                            <div class="category-icon">
+                                <% if (category.category_name === 'coffee') { %>
+                                    <i class="fas fa-coffee"></i>
+                                <% } else if (category.category_name === 'tea') { %>
+                                    <i class="fas fa-leaf"></i>
+                                <% } else if (category.category_name === 'pastry') { %>
+                                    <i class="fas fa-cookie-bite"></i>
+                                <% } else if (category.category_name === 'smoothie') { %>
+                                    <i class="fas fa-blender"></i>
+                                <% } else if (category.category_name === 'juice') { %>
+                                    <i class="fas fa-glass-whiskey"></i>
+                                <% } else { %>
+                                    <i class="fas fa-mug-hot"></i>
+                                <% } %>
+                            </div>
+                            <h5 class="category-title"><%= category.category_name.charAt(0).toUpperCase() + category.category_name.slice(1) %></h5>
+                            <p class="category-desc"><%= category.description || 'Delicious ' + category.category_name + ' products' %></p>
+                            <a href="/products?category=<%= category.category_name %>" class="btn btn-outline-primary">
+                                View Products <i class="fas fa-arrow-right ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <div class="col-12 text-center">
+                    <p class="text-muted">No categories available at the moment.</p>
+                </div>
+            <% } %>
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="/products" class="btn btn-primary btn-lg">
+                <i class="fas fa-th-large me-2"></i>View All Products
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products Section -->
+<section class="featured-products py-5 bg-light" id="featured-products">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="section-title">Featured Products</h2>
+            <p class="section-subtitle">Hand-picked favorites from our premium collection</p>
+        </div>
+        
+        <div class="row g-4" id="products-grid">
+            <%- include('../partials/products-grid', { products }) %>
+        </div>
+        <div id="products-pagination">
+            <%- include('../partials/pagination', { page: typeof page !== 'undefined' ? page : 1, totalPages: typeof totalPages !== 'undefined' ? totalPages : 1, category: typeof currentCategory !== 'undefined' ? currentCategory : '', search: typeof searchTerm !== 'undefined' ? searchTerm : '' }) %>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section py-5">
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fas fa-coffee"></i>
+                    </div>
+                    <h3 class="stat-number">120+</h3>
+                    <p class="stat-label">Premium Products</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3 class="stat-number">25+</h3>
+                    <p class="stat-label">Countries</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="stat-number">1000+</h3>
+                    <p class="stat-label">Happy Customers</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3 class="stat-number">4.9</h3>
+                    <p class="stat-label">Average Rating</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<%- include('../partials/footer') %>

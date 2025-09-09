@@ -1,0 +1,65 @@
+<!-- views/pages/product-detail.ejs -->
+<%- include('../partials/header') %>
+
+<!-- Product Detail Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mb-4">
+                <a href="javascript:history.back()" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Products
+                </a>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <!-- Product Image -->
+            <div class="col-lg-6">
+                <div class="product-image">
+                    <img src="<%= product.image_url || '/img/default-product.jpg' %>" 
+                         alt="<%= product.product_name %>" 
+                         class="img-fluid rounded shadow">
+                </div>
+            </div>
+            
+            <!-- Product Info -->
+            <div class="col-lg-6">
+                <div class="product-info">
+                    <div class="mb-3">
+                        <span class="badge bg-secondary"><%= product.category %></span>
+                    </div>
+                    
+                    <h1 class="mb-3"><%= product.product_name %></h1>
+                    
+                    <p class="text-muted mb-3">by <strong><%= product.brand %></strong></p>
+                    
+                    <div class="mb-4">
+                        <h3 class="text-accent">$<%= parseFloat(product.price).toFixed(2) %></h3>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <p><strong>Origin:</strong> <%= product.country %></p>
+                        <% if (product.description) { %>
+                            <p><strong>Description:</strong> <%= product.description %></p>
+                        <% } %>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex">
+                        <form action="/cart/add" method="post">
+                            <input type="hidden" name="productId" value="<%= product.product_id %>">
+                            <input type="hidden" name="quantity" value="1">
+                            <button class="btn btn-primary btn-lg" type="submit">
+                                <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                            </button>
+                        </form>
+                        <button class="btn btn-outline-primary">
+                            <i class="fas fa-heart me-2"></i>Wishlist
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>
