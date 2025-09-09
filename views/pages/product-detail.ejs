@@ -1,6 +1,23 @@
 <!-- views/pages/product-detail.ejs -->
 <%- include('../partials/header') %>
 
+<!-- Flash Messages -->
+<% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <%= error %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+<% } %>
+
+<% if (typeof success !== 'undefined' && success) { %>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        <%= success %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+<% } %>
+
 <!-- Product Detail Section -->
 <section class="py-5 bg-light">
     <div class="container">
@@ -33,6 +50,25 @@
                     
                     <p class="text-muted mb-3">by <strong><%= product.brand %></strong></p>
                     
+                    <!-- Product Rating -->
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="rating me-3">
+                                <% for (let i = 1; i <= 5; i++) { %>
+                                    <% if (i <= Math.floor(ratingSummary.average)) { %>
+                                        <i class="fas fa-star text-warning"></i>
+                                    <% } else if (i === Math.ceil(ratingSummary.average) && ratingSummary.average % 1 !== 0) { %>
+                                        <i class="fas fa-star-half-alt text-warning"></i>
+                                    <% } else { %>
+                                        <i class="far fa-star text-warning"></i>
+                                    <% } %>
+                                <% } %>
+                            </div>
+                            <span class="fw-bold me-2"><%= ratingSummary.average %></span>
+                            <span class="text-muted">(<%= ratingSummary.count %> review<%= ratingSummary.count !== 1 ? 's' : '' %>)</span>
+                        </div>
+                    </div>
+                    
                     <div class="mb-4">
                         <h3 class="text-accent">$<%= parseFloat(product.price).toFixed(2) %></h3>
                     </div>
@@ -61,5 +97,234 @@
         </div>
     </div>
 </section>
+
+<!-- Reviews Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h3 class="mb-4">
+                    <i class="fas fa-star me-2"></i>
+                    Customer Reviews
+                </h3>
+            </div>
+        </div>
+
+        <!-- Review Form -->
+        <% if (isAuthenticated) { %>
+            <% if (!userReview) { %>
+                <div class="row mb-5">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Write a Review</h5>
+                            </div>
+                            <div class="card-body">
+                                <form action="/reviews/submit" method="POST">
+                                    <input type="hidden" name="productId" value="<%= product.product_id %>">
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Rating</label>
+                                        <div class="rating-input">
+                                            <input type="radio" name="rating" value="5" id="star5" required>
+                                            <label for="star5"><i class="fas fa-star"></i></label>
+                                            <input type="radio" name="rating" value="4" id="star4">
+                                            <label for="star4"><i class="fas fa-star"></i></label>
+                                            <input type="radio" name="rating" value="3" id="star3">
+                                            <label for="star3"><i class="fas fa-star"></i></label>
+                                            <input type="radio" name="rating" value="2" id="star2">
+                                            <label for="star2"><i class="fas fa-star"></i></label>
+                                            <input type="radio" name="rating" value="1" id="star1">
+                                            <label for="star1"><i class="fas fa-star"></i></label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="comment" class="form-label">Comment (Optional)</label>
+                                        <textarea class="form-control" id="comment" name="comment" rows="3" 
+                                                  placeholder="Share your thoughts about this product..."></textarea>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-paper-plane me-2"></i>Submit Review
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% } else { %>
+                <!-- User's Existing Review -->
+                <div class="row mb-5">
+                    <div class="col-12">
+                        <div class="card border-primary">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">Your Review</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="rating mb-2">
+                                            <% for (let i = 1; i <= 5; i++) { %>
+                                                <% if (i <= userReview.rating) { %>
+                                                    <i class="fas fa-star text-warning"></i>
+                                                <% } else { %>
+                                                    <i class="far fa-star text-warning"></i>
+                                                <% } %>
+                                            <% } %>
+                                        </div>
+                                        <% if (userReview.comment) { %>
+                                            <p class="mb-0"><%= userReview.comment %></p>
+                                        <% } %>
+                                        <small class="text-muted">Reviewed on <%= new Date(userReview.created_at).toLocaleDateString() %></small>
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="editReview(<%= userReview.review_id %>)">
+                                            <i class="fas fa-edit me-1"></i>Edit
+                                        </button>
+                                        <a href="/reviews/<%= userReview.review_id %>/delete?productId=<%= product.product_id %>" 
+                                           class="btn btn-sm btn-outline-danger"
+                                           onclick="return confirm('Are you sure you want to delete this review?')">
+                                            <i class="fas fa-trash me-1"></i>Delete
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        <% } else { %>
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <a href="/login" class="alert-link">Login</a> to write a review for this product.
+                    </div>
+                </div>
+            </div>
+        <% } %>
+
+        <!-- Reviews List -->
+        <div class="row">
+            <div class="col-12">
+                <% if (reviews && reviews.length > 0) { %>
+                    <% reviews.forEach(review => { %>
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="d-flex align-items-center mb-2">
+                                            <strong class="me-3"><%= review.user_name %></strong>
+                                            <div class="rating">
+                                                <% for (let i = 1; i <= 5; i++) { %>
+                                                    <% if (i <= review.rating) { %>
+                                                        <i class="fas fa-star text-warning"></i>
+                                                    <% } else { %>
+                                                        <i class="far fa-star text-warning"></i>
+                                                    <% } %>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                        <% if (review.comment) { %>
+                                            <p class="mb-2"><%= review.comment %></p>
+                                        <% } %>
+                                        <small class="text-muted">Reviewed on <%= new Date(review.created_at).toLocaleDateString() %></small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="text-center py-4">
+                        <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No reviews yet. Be the first to review this product!</p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Edit Review Modal -->
+<div class="modal fade" id="editReviewModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Review</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="editReviewForm" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Rating</label>
+                        <div class="rating-input">
+                            <input type="radio" name="rating" value="5" id="edit-star5" required>
+                            <label for="edit-star5"><i class="fas fa-star"></i></label>
+                            <input type="radio" name="rating" value="4" id="edit-star4">
+                            <label for="edit-star4"><i class="fas fa-star"></i></label>
+                            <input type="radio" name="rating" value="3" id="edit-star3">
+                            <label for="edit-star3"><i class="fas fa-star"></i></label>
+                            <input type="radio" name="rating" value="2" id="edit-star2">
+                            <label for="edit-star2"><i class="fas fa-star"></i></label>
+                            <input type="radio" name="rating" value="1" id="edit-star1">
+                            <label for="edit-star1"><i class="fas fa-star"></i></label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-comment" class="form-label">Comment</label>
+                        <textarea class="form-control" id="edit-comment" name="comment" rows="3"></textarea>
+                    </div>
+                    <input type="hidden" name="productId" value="<%= product.product_id %>">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Review</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.rating-input {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+}
+
+.rating-input input[type="radio"] {
+    display: none;
+}
+
+.rating-input label {
+    font-size: 1.5rem;
+    color: #ddd;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.rating-input input[type="radio"]:checked ~ label,
+.rating-input label:hover,
+.rating-input label:hover ~ label {
+    color: #ffc107;
+}
+
+.rating {
+    display: flex;
+    gap: 2px;
+}
+</style>
+
+<script>
+function editReview(reviewId) {
+    // Set the form action
+    document.getElementById('editReviewForm').action = `/reviews/${reviewId}/update`;
+    
+    // Show the modal
+    const modal = new bootstrap.Modal(document.getElementById('editReviewModal'));
+    modal.show();
+}
+</script>
 
 <%- include('../partials/footer') %>

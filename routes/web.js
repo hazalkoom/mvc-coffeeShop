@@ -36,6 +36,11 @@ webRouter.get('/products', productController.allProducts);
 // Individual product detail page
 webRouter.get('/products/:id', productController.productDetail);
 
+// Review routes
+webRouter.post('/reviews/submit', productController.submitReview);
+webRouter.post('/reviews/:reviewId/update', productController.updateReview);
+webRouter.get('/reviews/:reviewId/delete', productController.deleteReview);
+
 // About page (placeholder)
 webRouter.get('/about', (req, res) => {
     res.render('pages/about', {

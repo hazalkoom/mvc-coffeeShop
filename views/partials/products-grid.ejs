@@ -20,6 +20,28 @@
                         <a href="/products/<%= product.product_id %>"><%= product.product_name %></a>
                     </h5>
                     <p class="product-brand text-muted">by <%= product.brand %></p>
+                    
+                    <!-- Product Rating -->
+                    <div class="product-rating mb-2">
+                        <div class="d-flex align-items-center">
+                            <div class="rating me-2">
+                                <% for (let i = 1; i <= 5; i++) { %>
+                                    <% if (i <= Math.floor(product.rating.average)) { %>
+                                        <i class="fas fa-star text-warning"></i>
+                                    <% } else if (i === Math.ceil(product.rating.average) && product.rating.average % 1 !== 0) { %>
+                                        <i class="fas fa-star-half-alt text-warning"></i>
+                                    <% } else { %>
+                                        <i class="far fa-star text-warning"></i>
+                                    <% } %>
+                                <% } %>
+                            </div>
+                            <% if (product.rating.count > 0) { %>
+                                <small class="text-muted">(<%= product.rating.count %>)</small>
+                            <% } else { %>
+                                <small class="text-muted">No reviews</small>
+                            <% } %>
+                        </div>
+                    </div>
                     <div class="product-details">
                         <span class="product-country">
                             <i class="fas fa-map-marker-alt me-1"></i><%= product.country %>

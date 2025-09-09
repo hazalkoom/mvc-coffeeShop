@@ -12,9 +12,8 @@ app.use(express.static(__dirname + '/public'));
 app.set('view engine', 'ejs');
 /* -------------- using form data -------------- */
 app.use(express.urlencoded({extended: true}));
-/* ------------- session ---------------------- */
 app.use(express.json());
-
+/* ------------- session ---------------------- */
 app.use(session({
     secret: 'thisismyapplicationtoday',
     resave: false,
@@ -24,15 +23,23 @@ app.use(session({
         maxAge: 1000 * 60 * 60 * 24 * 3, // three days to be expired
     }
 }));
+
 // auth locals for all views
 app.use((req, res, next) => {
     res.locals.isAuthenticated = !!(req.session && req.session.user);
     res.locals.user = (req.session && req.session.user) || null;
+    
+    // Flash messages
+    res.locals.error = req.session.error || null;
+    res.locals.success = req.session.success || null;
+    
+    // Clear flash messages after they're used
+    delete req.session.error;
+    delete req.session.success;
+    
     next();
 });
 /* ------------- router ----------------------- */
-// const dashboardRouter = require('./route/dashboard');
-// app.use(dashboardRouter);
 const webRouter = require('./routes/web');
 const usersRouter = require('./routes/users');
 const cartRouter = require('./routes/cart');
