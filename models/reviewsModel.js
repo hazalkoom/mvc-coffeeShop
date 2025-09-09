@@ -29,7 +29,13 @@ async function getReviewsByProduct(productId, limit = 10, offset = 0) {
             if (!error) {
                 resolve(result);
             } else {
-                reject(error);
+                // If table doesn't exist, return empty array
+                if (error.code === 'ER_NO_SUCH_TABLE') {
+                    console.log('Reviews table not found, returning empty reviews array');
+                    resolve([]);
+                } else {
+                    reject(error);
+                }
             }
         });
     });
@@ -107,7 +113,13 @@ async function hasUserReviewedProduct(userId, productId) {
             if (!error) {
                 resolve(result.length > 0);
             } else {
-                reject(error);
+                // If table doesn't exist, return false (no reviews exist)
+                if (error.code === 'ER_NO_SUCH_TABLE') {
+                    console.log('Reviews table not found, returning false for user review check');
+                    resolve(false);
+                } else {
+                    reject(error);
+                }
             }
         });
     });
@@ -122,7 +134,13 @@ async function getUserReviewForProduct(userId, productId) {
             if (!error) {
                 resolve(result[0] || null);
             } else {
-                reject(error);
+                // If table doesn't exist, return null (no user review)
+                if (error.code === 'ER_NO_SUCH_TABLE') {
+                    console.log('Reviews table not found, returning null for user review');
+                    resolve(null);
+                } else {
+                    reject(error);
+                }
             }
         });
     });
@@ -141,7 +159,16 @@ async function getProductAverageRating(productId) {
                     count: result[0].count
                 });
             } else {
-                reject(error);
+                // If table doesn't exist, return default values
+                if (error.code === 'ER_NO_SUCH_TABLE') {
+                    console.log('Reviews table not found, returning default rating values');
+                    resolve({
+                        average: 0,
+                        count: 0
+                    });
+                } else {
+                    reject(error);
+                }
             }
         });
     });

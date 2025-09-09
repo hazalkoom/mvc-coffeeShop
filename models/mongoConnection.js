@@ -7,9 +7,7 @@ let db;
 
 async function connectMongo() {
     if (db) return db;
-    client = new MongoClient(MONGO_URI, { 
-        useUnifiedTopology: true 
-    });
+    client = new MongoClient(MONGO_URI);
     await client.connect();
     // If the URI contains the db name, use that; otherwise default to coffeUsers
     const dbNameFromUri = (() => {
