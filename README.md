@@ -83,7 +83,7 @@ npm run dev
 4. Add items to your cart
 5. Manage your cart and checkout
 
-## API Endpoints
+## MVC ROUTES
 
 ### Authentication
 - `POST /users/register` - User registration
