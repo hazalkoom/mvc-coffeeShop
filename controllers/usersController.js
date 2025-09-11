@@ -110,8 +110,28 @@ async function showDashboard(req, res) {
             return;
         }
 
-        // Get user's cart items count
-        const cart = await usersModel.getCart(req.session.userId);
+        // Get user's cart items count and recent orders summary
+        const [cart, recentOrdersRows, totalSpent] = await Promise.all([
+            usersModel.getCart(req.session.userId),
+            (async () => {
+                try {
+                    const ordersModel = require('../models/ordersModel');
+                    const rows = await ordersModel.getRecentOrdersByUser(req.session.userId, 5);
+                    return rows.map(r => ({
+                        orderNumber: r.order_id,
+                        status: r.status,
+                        total: Number(r.total_amount),
+                        createdAt: r.created_at
+                    }));
+                } catch { return []; }
+            })(),
+            (async () => {
+                try {
+                    const ordersModel = require('../models/ordersModel');
+                    return await ordersModel.getUserTotalSpent(req.session.userId);
+                } catch { return 0; }
+            })()
+        ]);
         const cartItems = cart.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
         
         res.render('pages/dashboard', {
@@ -119,9 +139,9 @@ async function showDashboard(req, res) {
             isAuthenticated: true,
             user: req.session.user,
             userData: user,
-            recentOrders: [],
+            recentOrders: recentOrdersRows,
             cartItems: cartItems,
-            totalSpent: 0
+            totalSpent: totalSpent
         });
     } catch (error) {
         console.error('Dashboard error:', error);
@@ -174,7 +194,8 @@ async function updateProfile(req, res) {
             return res.redirect('/login');
         }
 
-        const { first_name, last_name, email, current_password, new_password } = req.body;
+        const { first_name, last_name, email, current_password, new_password,
+            phone, address_line1, address_line2, city, state, postal_code, country } = req.body;
         const userId = req.session.userId;
 
         // Get current user data
@@ -229,6 +250,13 @@ async function updateProfile(req, res) {
         if (first_name) updateData.first_name = first_name;
         if (last_name) updateData.last_name = last_name;
         if (email) updateData.email = email;
+        if (phone !== undefined) updateData.phone = phone;
+        if (address_line1 !== undefined) updateData.address_line1 = address_line1;
+        if (address_line2 !== undefined) updateData.address_line2 = address_line2;
+        if (city !== undefined) updateData.city = city;
+        if (state !== undefined) updateData.state = state;
+        if (postal_code !== undefined) updateData.postal_code = postal_code;
+        if (country !== undefined) updateData.country = country;
         if (new_password && new_password.trim() !== '') {
             updateData.password = await bcrypt.hash(new_password, 10);
         }

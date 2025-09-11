@@ -1,0 +1,109 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <h2 class="mb-4">Checkout</h2>
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-truck me-2"></i>Shipping Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Name</label>
+                                <input class="form-control" value="<%= (userData.first_name || '') + ' ' + (userData.last_name || '') %>" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Email</label>
+                                <input class="form-control" value="<%= userData.email %>" readonly>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Phone</label>
+                                <input class="form-control" value="<%= userData.phone || '' %>" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Address Line 1</label>
+                                <input class="form-control" value="<%= userData.address_line1 || '' %>" readonly>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Address Line 2</label>
+                                <input class="form-control" value="<%= userData.address_line2 || '' %>" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">City</label>
+                                <input class="form-control" value="<%= userData.city || '' %>" readonly>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">State</label>
+                                <input class="form-control" value="<%= userData.state || '' %>" readonly>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Postal Code</label>
+                                <input class="form-control" value="<%= userData.postal_code || '' %>" readonly>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Country</label>
+                                <input class="form-control" value="<%= userData.country || '' %>" readonly>
+                            </div>
+                        </div>
+                        <a class="btn btn-outline-primary" href="/profile"><i class="fas fa-edit me-2"></i>Edit in Profile</a>
+                    </div>
+                </div>
+
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-box me-2"></i>Order Items</h5>
+                    </div>
+                    <div class="card-body">
+                        <% items.forEach(it => { %>
+                            <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                                <div class="d-flex align-items-center gap-3">
+                                    <img src="<%= (it.product && it.product.image_url) || '/img/default-product.jpg' %>" style="width:60px;height:60px;object-fit:cover;border-radius:8px;">
+                                    <div>
+                                        <div class="fw-bold"><%= it.product_name %></div>
+                                        <small class="text-muted">Qty: <%= it.quantity %></small>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <div>$<%= Number(it.price).toFixed(2) %></div>
+                                    <small class="text-muted">$<%= (Number(it.price) * it.quantity).toFixed(2) %> subtotal</small>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-receipt me-2"></i>Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Items total</span>
+                            <strong>$<%= total.toFixed(2) %></strong>
+                        </div>
+                        <div class="d-grid mt-3">
+                            <form action="/checkout/confirm" method="post">
+                                <button class="btn btn-primary btn-lg" type="submit"><i class="fas fa-check me-2"></i>Confirm Order</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>
+
+

@@ -37,18 +37,25 @@ app.use(async (req, res, next) => {
     delete req.session.error;
     delete req.session.success;
     
-    // Calculate cart count for authenticated users
+    // Calculate cart and favorites counts for authenticated users
     if (req.session && req.session.userId) {
         try {
             const usersModel = require('./models/usersModel');
             const cart = await usersModel.getCart(req.session.userId);
             res.locals.cartCount = cart.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+            const favorites = await usersModel.getFavorites(req.session.userId);
+            res.locals.favoritesCount = favorites.length;
+            res.locals.favoriteIds = favorites;
         } catch (error) {
             console.error('Error getting cart count:', error);
             res.locals.cartCount = 0;
+            res.locals.favoritesCount = 0;
+            res.locals.favoriteIds = [];
         }
     } else {
         res.locals.cartCount = 0;
+        res.locals.favoritesCount = 0;
+        res.locals.favoriteIds = [];
     }
     
     next();
@@ -57,6 +64,9 @@ app.use(async (req, res, next) => {
 const webRouter = require('./routes/web');
 const usersRouter = require('./routes/users');
 const cartRouter = require('./routes/cart');
+const favoritesRouter = require('./routes/favorites');
+const checkoutRouter = require('./routes/checkout');
+const ordersRouter = require('./routes/orders');
 
 // Initialize Mongo, then mount routes and start server
 (async () => {
@@ -67,6 +77,9 @@ const cartRouter = require('./routes/cart');
         app.use(webRouter);
         app.use(usersRouter);
         app.use(cartRouter);
+        app.use(favoritesRouter);
+        app.use(checkoutRouter);
+        app.use(ordersRouter);
 
         /* ---------------- start server --------------- */
         const port = process.env.PORT || 3001;

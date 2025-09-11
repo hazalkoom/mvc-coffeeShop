@@ -38,12 +38,12 @@
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="/">
-                            <i class="fas fa-home"></i>Home
+                            <i class="fas fa-home me-1"></i>Home
                         </a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="productsDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-coffee"></i>Products
+                            <i class="fas fa-coffee me-1"></i>Products
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="/products"><i class="fas fa-th-large me-2"></i>All Products</a></li>
@@ -55,18 +55,18 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/about">
-                            <i class="fas fa-info-circle"></i>About
+                            <i class="fas fa-info-circle me-1"></i>About
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/contact">
-                            <i class="fas fa-envelope"></i>Contact
+                            <i class="fas fa-envelope me-1"></i>Contact
                         </a>
                     </li>
                 </ul>
                 
                 <!-- Search Form -->
-                <form class="search-form d-flex me-3">
+                <form class="search-form d-flex me-3" action="/products" method="get">
                     <div class="input-group">
                         <input class="form-control" type="search" placeholder="Search products..." name="search">
                         <button class="btn btn-search" type="submit">
@@ -79,10 +79,16 @@
                 <ul class="navbar-nav">
                     <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
                         <!-- Authenticated User -->
-                        <li class="nav-item">
+                        <li class="nav-item me-2">
                             <a class="nav-link" href="/cart" id="navCartLink">
                                 <i class="fas fa-shopping-cart" id="navCartIcon"></i>
-                                Cart <span class="badge" id="cartCount"><%= typeof cartCount !== 'undefined' ? cartCount : 0 %></span>
+                                <span class="d-none d-lg-inline">Cart</span> <span class="badge" id="cartCount"><%= typeof cartCount !== 'undefined' ? cartCount : 0 %></span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/favorites" id="navFavLink">
+                                <i class="fas fa-heart" id="navFavIcon"></i>
+                                <span class="d-none d-lg-inline">Favorites</span> <span class="badge" id="favCount"><%= typeof favoritesCount !== 'undefined' ? favoritesCount : 0 %></span>
                             </a>
                         </li>
                         <li class="nav-item dropdown">
@@ -136,5 +142,13 @@ function updateCartCount(newCount) {
 function getCurrentCartCount() {
     const cartCountEl = document.getElementById('cartCount');
     return cartCountEl ? parseInt(cartCountEl.textContent) || 0 : 0;
+}
+
+// Function to update favorites count in header
+function updateFavCount(newCount) {
+    const favCountEl = document.getElementById('favCount');
+    if (favCountEl) {
+        favCountEl.textContent = newCount;
+    }
 }
 </script>

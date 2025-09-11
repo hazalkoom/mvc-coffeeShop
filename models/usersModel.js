@@ -118,6 +118,48 @@ async function setCartItemQuantity(userId, productId, quantity) {
     return true;
 }
 
+async function addFavorite(userId, productId) {
+	const col = await getUsersCollection();
+	const { ObjectId } = require('mongodb');
+	await col.updateOne(
+		{ _id: new ObjectId(userId) },
+		{ $addToSet: { favorites: String(productId) }, $set: { updatedAt: new Date() } }
+	);
+	return true;
+}
+
+async function removeFavorite(userId, productId) {
+	const col = await getUsersCollection();
+	const { ObjectId } = require('mongodb');
+	await col.updateOne(
+		{ _id: new ObjectId(userId) },
+		{ $pull: { favorites: String(productId) }, $set: { updatedAt: new Date() } }
+	);
+	return true;
+}
+
+async function toggleFavorite(userId, productId) {
+	const favorites = await getFavorites(userId);
+	const exists = favorites.includes(String(productId));
+	if (exists) {
+		await removeFavorite(userId, productId);
+		return { isFavorite: false };
+	} else {
+		await addFavorite(userId, productId);
+		return { isFavorite: true };
+	}
+}
+
+async function getFavorites(userId) {
+	const user = await findUserById(userId);
+	return user && Array.isArray(user.favorites) ? user.favorites.map(String) : [];
+}
+
+async function isFavorite(userId, productId) {
+	const favorites = await getFavorites(userId);
+	return favorites.includes(String(productId));
+}
+
 module.exports = {
 	createUser,
 	findUserByEmail,
@@ -128,5 +170,10 @@ module.exports = {
 	getCart,
 	removeCartItem,
 	clearCart,
-	setCartItemQuantity
+	setCartItemQuantity,
+	addFavorite,
+	removeFavorite,
+	toggleFavorite,
+	getFavorites,
+	isFavorite
 };

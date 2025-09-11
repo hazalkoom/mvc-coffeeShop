@@ -1,3 +1,48 @@
+/* --- Favorites & Cart button styles --- */
+.product-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: stretch;
+}
+
+.product-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-icon {
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fav-toggle-btn {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.fav-toggle-btn[aria-pressed="true"],
+.fav-toggle-btn:hover {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+/* Navbar spacing tweaks */
+.navbar .nav-link .badge {
+    background: #ffc107;
+    color: #000;
+    margin-left: 6px;
+}
+
+.navbar .nav-link i { margin-right: 4px; }
+
+.search-form .form-control { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.search-form .btn-search { border-top-left-radius: 0; border-bottom-left-radius: 0; }
+
 :root {
     --primary-dark: #2c1810;
     --primary-brown: #8b4513;

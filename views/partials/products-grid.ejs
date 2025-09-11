@@ -58,8 +58,9 @@
                                 <i class="fas fa-shopping-cart me-1"></i>Add to Cart
                             </button>
                         </form>
-                        <button class="btn btn-outline-secondary">
-                            <i class="fas fa-heart"></i>
+                        <% const isFav = (Array.isArray(typeof favoriteIds !== 'undefined' ? favoriteIds : []) && (favoriteIds || []).includes(String(product.product_id))); %>
+                        <button class="btn btn-icon fav-toggle-btn" data-product-id="<%= product.product_id %>" aria-pressed="<%= isFav ? 'true' : 'false' %>">
+                            <i class="<%= isFav ? 'fas' : 'far' %> fa-heart"></i>
                         </button>
                     </div>
                 </div>
@@ -72,4 +73,35 @@
     </div>
 <% } %>
 
-
+<script>
+document.addEventListener('click', async function(e) {
+    const btn = e.target.closest('.fav-toggle-btn');
+    if (!btn) return;
+    e.preventDefault();
+    const productId = btn.getAttribute('data-product-id');
+    try {
+        const res = await fetch('/favorites/toggle', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+            body: JSON.stringify({ productId })
+        });
+        const data = await res.json();
+        if (data && data.ok) {
+            const icon = btn.querySelector('i');
+            if (data.isFavorite) {
+                if (icon) { icon.classList.remove('far'); icon.classList.add('fas'); }
+                btn.setAttribute('aria-pressed', 'true');
+            } else {
+                if (icon) { icon.classList.remove('fas'); icon.classList.add('far'); }
+                btn.setAttribute('aria-pressed', 'false');
+            }
+            if (typeof updateFavCount === 'function') {
+                updateFavCount(data.favoritesCount || 0);
+            }
+        }
+    } catch (err) {
+        console.error('Favorite toggle failed', err);
+        window.location.href = '/login';
+    }
+});
+</script>

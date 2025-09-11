@@ -88,8 +88,9 @@
                                 <i class="fas fa-shopping-cart me-2"></i>Add to Cart
                             </button>
                         </form>
-                        <button class="btn btn-outline-primary">
-                            <i class="fas fa-heart me-2"></i>Wishlist
+                        <% const isFav = (Array.isArray(typeof favoriteIds !== 'undefined' ? favoriteIds : []) && (favoriteIds || []).includes(String(product.product_id))); %>
+                        <button class="btn btn-icon fav-toggle-btn" data-product-id="<%= product.product_id %>" aria-pressed="<%= isFav ? 'true' : 'false' %>">
+                            <i class="<%= isFav ? 'fas' : 'far' %> fa-heart"></i>
                         </button>
                     </div>
                 </div>
@@ -325,6 +326,42 @@ function editReview(reviewId) {
     const modal = new bootstrap.Modal(document.getElementById('editReviewModal'));
     modal.show();
 }
+
+// Favorites toggle handlers (shared)
+document.addEventListener('click', async function(e) {
+    const btn = e.target.closest('.fav-toggle-btn');
+    if (!btn) return;
+    e.preventDefault();
+    const productId = btn.getAttribute('data-product-id');
+    try {
+        const res = await fetch('/favorites/toggle', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+            body: JSON.stringify({ productId })
+        });
+        const data = await res.json();
+        if (data && data.ok) {
+            // Update heart icon
+            const icon = btn.querySelector('i');
+            const label = btn.querySelector('span');
+            if (data.isFavorite) {
+                if (icon) { icon.classList.remove('far'); icon.classList.add('fas'); }
+                btn.setAttribute('aria-pressed', 'true');
+                if (label) { label.textContent = 'Favorited'; }
+            } else {
+                if (icon) { icon.classList.remove('fas'); icon.classList.add('far'); }
+                btn.setAttribute('aria-pressed', 'false');
+                if (label) { label.textContent = 'Favorite'; }
+            }
+            if (typeof updateFavCount === 'function') {
+                updateFavCount(data.favoritesCount || 0);
+            }
+        }
+    } catch (err) {
+        console.error('Favorite toggle failed', err);
+        window.location.href = '/login';
+    }
+});
 </script>
 
 <%- include('../partials/footer') %>
