@@ -4,10 +4,13 @@ const app = express();
 const path = require('path');
 require('dotenv').config();
 const { connectMongo } = require('./models/mongoConnection');
-
+const helmet = require('helmet');
 
 /* ------------- public folder ---------------- */
-app.use(express.static(__dirname + '/public'));
+app.use(express.static('public', {
+    dotfiles: 'ignore',
+    maxAge: '1d'
+}));
 /* ------------- view engine ------------------ */
 app.set('view engine', 'ejs');
 /* -------------- using form data -------------- */
@@ -15,13 +18,14 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 /* ------------- session ---------------------- */
 app.use(session({
-    secret: 'thisismyapplicationtoday',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        secure: false,
-        maxAge: 1000 * 60 * 60 * 24 * 3, // three days to be expired
-    }
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production', // true if using HTTPS
+    sameSite: 'strict'
+  }
 }));
 
 // auth locals for all views
@@ -80,6 +84,11 @@ const ordersRouter = require('./routes/orders');
         app.use(favoritesRouter);
         app.use(checkoutRouter);
         app.use(ordersRouter);
+        app.use((err, req, res, next) => {
+        console.error(err.stack);
+            res.status(500).send('Something went wrong!');
+        });
+
 
         /* ---------------- start server --------------- */
         const port = process.env.PORT || 3001;
