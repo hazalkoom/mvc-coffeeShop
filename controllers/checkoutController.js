@@ -3,6 +3,9 @@ const productModel = require('../models/proudctsModel');
 const ordersModel = require('../models/ordersModel');
 const { sendMail, renderOrderEmail, ownerEmail } = require('../services/emailService');
 
+// Override the owner email if needed
+const OWNER_EMAIL =  process.env.OWNER_EMAIL;
+
 function requireAuth(req, res, next) {
     if (!req.session || !req.session.userId) {
         return res.redirect('/login');
@@ -77,10 +80,12 @@ async function confirmCheckout(req, res) {
         // Clear cart
         await usersModel.clearCart(userId);
 
-        // Emails
+        // Emails - using the configured owner email
         const html = renderOrderEmail({ orderId, user, items, total: totalAmount });
         try {
-            await sendMail({ to: ownerEmail, subject: `New Order #${orderId}`, html });
+            // Send notification to owner (you)
+            await sendMail({ to: OWNER_EMAIL, subject: `New Order #${orderId}`, html });
+            // Send confirmation to customer
             await sendMail({ to: user.email, subject: `We received your order #${orderId}`, html });
         } catch (e) {
             console.warn('Email send failed or skipped', e.message || e);
@@ -105,5 +110,3 @@ module.exports = {
     showCheckout,
     confirmCheckout
 };
-
-

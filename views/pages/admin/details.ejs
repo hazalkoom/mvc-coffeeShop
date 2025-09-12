@@ -1,0 +1,46 @@
+<%- include('../../partials/Aheader') %>
+
+<div class="page-header">
+    <h1><%= product.product_name %></h1>
+    <a href="/admin/products" class="btn btn-secondary">&larr; Back to Products</a>
+</div>
+
+<div class="card">
+    <!-- Product details content -->
+    <p><strong>Brand:</strong> <%= product.brand %></p>
+    <p><strong>Category:</strong> <%= product.category %></p>
+    <p><strong>Price:</strong> $<%= parseFloat(product.price).toFixed(2) %></p>
+    <!-- Add more details as needed -->
+</div>
+
+<div class="card">
+    <h2 class="card-header">Reviews</h2>
+    <% if (reviews.length > 0) { %>
+        <table>
+            <thead>
+                <tr>
+                    <th>Rating</th>
+                    <th>Review</th>
+                    <th>User ID</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% reviews.forEach(review => { %>
+                    <tr>
+                        <td><%= review.rating %>/5</td>
+                        <td><%= review.review_text %></td>
+                        <td><%= review.user_id %></td>
+                        <td><%= new Date(review.created_at).toLocaleDateString() %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } else { %>
+        <p>No reviews for this product yet.</p>
+    <% } %>
+</div>
+
+
+<%- include('../../partials/Afooter') %>
+

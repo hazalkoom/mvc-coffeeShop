@@ -1,0 +1,60 @@
+<%- include('../../partials/Aheader') %>
+
+<div class="page-header">
+    <h1>Order #<%= order.order_id %></h1>
+     <a href="/admin/orders" class="btn btn-secondary">&larr; Back to Orders</a>
+</div>
+
+<div class="card">
+    <div class="card-header">Order Summary</div>
+    <!-- Order details content -->
+    <p><strong>Status:</strong> <span class="status status-<%= order.status.toLowerCase() %>"><%= order.status %></span></p>
+    <p><strong>Total:</strong> $<%= parseFloat(order.total_amount).toFixed(2) %></p>
+    <p><strong>Customer:</strong> <%= order.shipping_name %></p>
+    <p><strong>Address:</strong> <%= order.address_line1 %>, <%= order.city %>, <%= order.postal_code %></p>
+</div>
+
+<div class="card">
+    <h2 class="card-header">Update Status</h2>
+    <form action="/admin/orders/<%= order.order_id %>/status" method="POST">
+        <div class="form-group">
+            <label for="status">New Status</label>
+            <select name="status" id="status" class="form-control">
+                <option value="pending" <%= order.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                <option value="shipped" <%= order.status === 'shipped' ? 'selected' : '' %>>Shipped</option>
+                <option value="completed" <%= order.status === 'completed' ? 'selected' : '' %>>Completed</option>
+                <option value="cancelled" <%= order.status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+            </select>
+        </div>
+        <div class="form-actions" style="justify-content: flex-start; padding-top: 1rem; border-top: none;">
+             <button type="submit" class="btn btn-primary">Update Status</button>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <h2 class="card-header">Order Items</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Unit Price</th>
+                <th>Quantity</th>
+                <th>Line Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% order.items.forEach(item => { %>
+                <tr>
+                    <td><a href="/admin/products/<%= item.product_id %>"><%= item.product_name %></a></td>
+                    <td>$<%= parseFloat(item.unit_price).toFixed(2) %></td>
+                    <td><%= item.quantity %></td>
+                    <td>$<%= parseFloat(item.line_total).toFixed(2) %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>
+
+<%- include('../../partials/Afooter') %>
+

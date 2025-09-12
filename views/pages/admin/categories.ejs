@@ -1,0 +1,40 @@
+<%- include('../../partials/Aheader') %>
+<div class="page-header">
+    <h1>Manage Categories</h1>
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Category Name</th>
+                <th>Product Count</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% categories.forEach(category => { %>
+                <tr>
+                    <td><%= category.category_name %></td>
+                    <td><%= category.product_count %></td>
+                    <td>
+                        <% if (category.is_active) { %>
+                            <span class="status status-active">Active</span>
+                        <% } else { %>
+                            <span class="status status-inactive">Inactive</span>
+                        <% } %>
+                    </td>
+                    <td>
+                        <form action="/admin/categories/<%= category.category_id %>/toggle" method="POST">
+                            <button type="submit" class="btn btn-secondary">
+                                <%= category.is_active ? 'Deactivate' : 'Activate' %>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>
+<%- include('../../partials/Afooter') %>

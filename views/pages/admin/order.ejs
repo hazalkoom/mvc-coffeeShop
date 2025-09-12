@@ -1,0 +1,36 @@
+<%- include('../../partials/Aheader') %>
+
+<div class="page-header">
+    <h1>Manage Orders</h1>
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>User ID</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% orders.forEach(order => { %>
+                <tr>
+                    <td><a href="/admin/orders/<%= order.order_id %>">#<%= order.order_id %></a></td>
+                    <td><%= order.user_id %></td>
+                    <td>$<%= parseFloat(order.total_amount).toFixed(2) %></td>
+                    <td><span class="status status-<%= order.status.toLowerCase() %>"><%= order.status %></span></td>
+                    <td><%= new Date(order.created_at).toLocaleDateString() %></td>
+                    <td><a href="/admin/orders/<%= order.order_id %>" class="btn-link">View Details</a></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+    <!-- Pagination can go here -->
+</div>
+
+<%- include('../../partials/Afooter') %>
+

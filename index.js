@@ -71,6 +71,7 @@ const cartRouter = require('./routes/cart');
 const favoritesRouter = require('./routes/favorites');
 const checkoutRouter = require('./routes/checkout');
 const ordersRouter = require('./routes/orders');
+const adminRouter = require('./routes/admin');
 
 // Initialize Mongo, then mount routes and start server
 (async () => {
@@ -84,6 +85,7 @@ const ordersRouter = require('./routes/orders');
         app.use(favoritesRouter);
         app.use(checkoutRouter);
         app.use(ordersRouter);
+        app.use(adminRouter);
         app.use((err, req, res, next) => {
         console.error(err.stack);
             res.status(500).send('Something went wrong!');

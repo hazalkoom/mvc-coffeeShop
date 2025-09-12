@@ -1,0 +1,96 @@
+<%- include('../../partials/Aheader') %>
+
+<div class="page-header">
+    <h1>Dashboard</h1>
+    <p>Welcome back, <%= user.username %>!</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-card-icon icon-revenue">
+            <i class="fas fa-dollar-sign"></i>
+        </div>
+        <div class="stat-card-info">
+            <div class="stat-card-number">$<%= Number(stats.totalRevenue[0].revenue || 0).toFixed(2) %></div>
+            <div class="stat-card-label">Total Revenue</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-icon icon-orders">
+            <i class="fas fa-shopping-cart"></i>
+        </div>
+        <div class="stat-card-info">
+            <div class="stat-card-number"><%= stats.totalOrders[0].count %></div>
+            <div class="stat-card-label">Total Orders</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-icon icon-products">
+            <i class="fas fa-box"></i>
+        </div>
+        <div class="stat-card-info">
+            <div class="stat-card-number"><%= stats.totalProducts[0].count %></div>
+            <div class="stat-card-label">Total Products</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-icon icon-pending">
+            <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-card-info">
+            <div class="stat-card-number"><%= stats.pendingOrders[0].count %></div>
+            <div class="stat-card-label">Pending Orders</div>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <div class="card">
+        <h2 class="card-header">Recent Orders</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% recentOrders.forEach(order => { %>
+                    <tr>
+                        <td><a href="/admin/orders/<%= order.order_id %>">#<%= order.order_id %></a></td>
+                        <td>
+                           <span class="status status-<%= order.status.toLowerCase() %>">
+                                <%= order.status %>
+                           </span>
+                        </td>
+                        <td>$<%= parseFloat(order.total_amount).toFixed(2) %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+    <div class="card">
+        <h2 class="card-header">Recent Products</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% recentProducts.forEach(product => { %>
+                    <tr>
+                        <td><a href="/admin/products/<%= product.product_id %>"><%= product.product_name %></a></td>
+                        <td>$<%= parseFloat(product.price).toFixed(2) %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<%- include('../../partials/Afooter') %>
+

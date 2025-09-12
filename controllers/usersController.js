@@ -58,12 +58,13 @@ async function showLogin(req, res) {
     });
 }
 
-// Handle login POST (simple, no hashing yet)
+// Handle login POST with role-based redirection
 async function handleLogin(req, res) {
     try {
         const { email, password } = req.body;
         const user = await usersModel.findUserByEmail(email);
         const isValid = user ? await bcrypt.compare(password, user.password || '') : false;
+        
         if (!user || !isValid) {
             return res.status(401).render('pages/login', {
                 title: 'Login',
@@ -72,19 +73,47 @@ async function handleLogin(req, res) {
                 error: 'Invalid credentials.'
             });
         }
+        
+        // Set session data
         req.session.userId = String(user._id);
-        req.session.user = { _id: String(user._id), email: user.email, first_name: user.first_name, last_name: user.last_name, role: user.role };
-        return res.redirect('/');
-    } catch (err) {
-        console.error('Login error:', err);
-        return res.status(500).render('pages/login', {
+        req.session.user = { 
+            _id: String(user._id), 
+            email: user.email, 
+            first_name: user.first_name, 
+            last_name: user.last_name, 
+            role: user.role 
+        };
+        
+        // IMPORTANT: Save session before redirect
+        req.session.save((err) => {
+            if (err) {
+                console.error('Session save error:', err);
+                return res.status(500).render('pages/login', {
+                    title: 'Login',
+                    isAuthenticated: false,
+                    user: null,
+                    error: 'Login failed. Please try again.'
+                });
+            }
+
+            // ** NEW: Check user role for redirection **
+            if (req.session.user.role === 'admin') {
+                return res.redirect('/admin');
+            } else {
+                return res.redirect('/');
+            }
+        });
+    } catch (error) {
+        console.error('Error during login:', error);
+        res.status(500).render('pages/login', {
             title: 'Login',
             isAuthenticated: false,
             user: null,
-            error: 'Internal server error.'
+            error: 'An unexpected error occurred.'
         });
     }
 }
+
 
 // Handle logout
 async function handleLogout(req, res) {
