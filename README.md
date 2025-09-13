@@ -324,8 +324,7 @@ This application follows the **Model-View-Controller (MVC)** pattern:
 ## Future Enhancements
 
 - [ ] Payment gateway integration
-- [ ] Email notifications
-- [ ] Advanced search and filtering
+
 - [ ] Loyalty program
 - [ ] Mobile app API
 - [ ] Real-time order tracking
