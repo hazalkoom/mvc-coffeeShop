@@ -87,7 +87,9 @@ coffeShop/
 │   └── partials/        # Reusable components
 │       ├── header.ejs
 │       ├── footer.ejs
-│       ├── admin-sidebar.ejs  # 🆕
+|       ├── Aheader.ejs
+│       ├── Afooter.ejs
+│       ├── pagination.ejs  # 🆕
 │       └── products-grid.ejs
 ├── public/              # Static assets
 │   ├── css/
@@ -97,7 +99,7 @@ coffeShop/
 │   └── img/
 ├── database/            # Database schemas
 │   ├── reviews_table.sql
-│   └── orders_table.sql  # 🆕
+│     
 ├── middleware/          # Custom middleware 🆕
 │   └── adminAuth.js     # Admin authentication
 └── index.js             # Application entry point
